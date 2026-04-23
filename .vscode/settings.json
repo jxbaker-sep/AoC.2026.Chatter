@@ -1,0 +1,25 @@
+{
+  // Turn off AI assistance when editing .chatter files so we can enjoy
+  // writing the language by hand. Other file types in this workspace
+  // keep their normal Copilot / inline-suggestion behavior.
+  "github.copilot.enable": {
+    "*": true,
+    "chatter": false
+  },
+  "github.copilot.nextEditSuggestions.enabled": {
+    "*": true,
+    "chatter": false
+  },
+  "[chatter]": {
+    "editor.inlineSuggest.enabled": false,
+    "editor.suggest.preview": false,
+    "editor.quickSuggestions": {
+      "other": "off",
+      "comments": "off",
+      "strings": "off"
+    },
+    "editor.wordBasedSuggestions": "off",
+    "editor.parameterHints.enabled": false,
+    "editor.suggestOnTriggerCharacters": false
+  }
+}

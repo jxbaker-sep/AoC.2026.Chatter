@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+# Scaffold a new Advent of Code day.
+#
+# Usage:
+#   ./new-day 1        -> creates day01/
+#   ./new-day 25       -> creates day25/
+#
+# Creates:
+#   dayNN/solution.chatter   starter program
+#   dayNN/example.txt        empty sample input (paste from the problem)
+#   dayNN/input.txt          empty, git-ignored (personal puzzle input)
+#
+# Refuses to overwrite an existing dayNN/ directory.
+
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+  echo "usage: $0 <day-number>" >&2
+  exit 2
+fi
+
+raw="$1"
+if ! [[ "$raw" =~ ^[0-9]+$ ]] || (( raw < 1 || raw > 25 )); then
+  echo "new-day: day must be an integer 1..25 (got '$raw')" >&2
+  exit 2
+fi
+
+dir=$(printf "day%02d" "$raw")
+repo_root=$(cd "$(dirname "$0")" && pwd)
+target="$repo_root/$dir"
+
+if [[ -e "$target" ]]; then
+  echo "new-day: $dir/ already exists — refusing to overwrite" >&2
+  exit 1
+fi
+
+mkdir -p "$target"
+
+cat >"$target/solution.chatter" <<CHATTER
+# Advent of Code 2026 — Day $raw
+# Run: ./chatter $dir/solution.chatter < $dir/example.txt
+#      ./chatter $dir/solution.chatter < $dir/input.txt
+
+say "part 1: TODO"
+say "part 2: TODO"
+CHATTER
+
+: >"$target/example.txt"
+: >"$target/input.txt"
+
+gitignore="$repo_root/.gitignore"
+rule="$dir/input.txt"
+if [[ ! -f "$gitignore" ]] || ! grep -qxF "$rule" "$gitignore"; then
+  printf '%s\n' "$rule" >>"$gitignore"
+  echo "new-day: added '$rule' to .gitignore"
+fi
+
+echo "new-day: scaffolded $dir/"
+ls "$target"

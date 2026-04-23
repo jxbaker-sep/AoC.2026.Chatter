@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+# Helper to invoke the Chatter interpreter from the sibling repo at ~/dev/chatter.
+#
+# Usage:
+#   ./chatter day01/solution.chatter
+#   ./chatter day01/solution.chatter < day01/input.txt
+#
+# Before invoking the interpreter, this script cd's into the directory of the
+# .chatter file so relative paths inside the program (e.g. opening
+# "input.txt") resolve relative to the program's own directory, not the
+# caller's cwd.
+#
+# Env overrides:
+#   CHATTER_HOME   path to the chatter repo (default: ~/dev/chatter)
+#   CHATTER_MODE   "dist" | "ts-node" | "auto" (default: auto)
+#
+# Default "auto" prefers ts-node against live src/, because Chatter is under
+# active development and a checked-in dist/ is almost always stale. Opt into
+# dist explicitly (CHATTER_MODE=dist) after running `npm run build` in the
+# chatter repo if you need the speedup.
+
+set -euo pipefail
+
+CHATTER_HOME="${CHATTER_HOME:-$HOME/dev/chatter}"
+CHATTER_MODE="${CHATTER_MODE:-auto}"
+
+if [[ ! -d "$CHATTER_HOME" ]]; then
+  echo "chatter: CHATTER_HOME not found: $CHATTER_HOME" >&2
+  echo "  Clone or symlink the chatter repo, or set CHATTER_HOME." >&2
+  exit 127
+fi
+
+if [[ $# -lt 1 ]]; then
+  echo "usage: $0 <path/to/file.chatter> [extra args...]" >&2
+  exit 2
+fi
+
+script="$1"
+shift
+
+if [[ ! -f "$script" ]]; then
+  echo "chatter: file not found: $script" >&2
+  exit 1
+fi
+
+script_dir="$(cd "$(dirname "$script")" && pwd)"
+script_abs="$script_dir/$(basename "$script")"
+chatter_home_abs="$(cd "$CHATTER_HOME" && pwd)"
+
+run_dist() {
+  (cd "$script_dir" && node "$chatter_home_abs/dist/index.js" "$script_abs" "$@")
+}
+
+run_tsnode() {
+  (cd "$script_dir" && \
+    TS_NODE_PROJECT="$chatter_home_abs/tsconfig.json" \
+    "$chatter_home_abs/node_modules/.bin/ts-node" \
+      "$chatter_home_abs/src/index.ts" "$script_abs" "$@")
+}
+
+case "$CHATTER_MODE" in
+  dist)
+    run_dist "$@"
+    ;;
+  ts-node|auto)
+    run_tsnode "$@"
+    ;;
+  *)
+    echo "chatter: unknown CHATTER_MODE '$CHATTER_MODE' (expected dist|ts-node|auto)" >&2
+    exit 2
+    ;;
+esac
