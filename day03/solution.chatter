@@ -1,0 +1,30 @@
+# Advent of Code 2026 — Day 03
+# Run: ./chatter day03/solution.chatter 
+
+use greeting from "std:placeholder"
+
+greeting
+say it
+
+function part1 takes string path returns number is
+  return 0
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day 03:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 0
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 0
+
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 0
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 0

@@ -1,38 +1,14 @@
 # Advent of Code 2026 — Day 1
-# Run: ./chatter day01/solution.chatter < day01/example.txt
-#      ./chatter day01/solution.chatter < day01/input.txt
 
+use substring, string_to_number from "../utils/strings"
 
 function decode takes string rotation returns number is
-    var result is 0
-    repeat with i from 2 to length of rotation
-        set c to character i of rotation
-        multiply result by 10
-        if c is "1"
-            add 1 to result
-        else if c is "2"
-            add 2 to result
-        else if c is "3"
-            add 3 to result
-        else if c is "4"
-            add 4 to result
-        else if c is "5"
-            add 5 to result
-        else if c is "6"
-            add 6 to result
-        else if c is "7"
-            add 7 to result
-        else if c is "8"
-            add 8 to result
-        else if c is "9"
-            add 9 to result
-        end
-    end repeat
+    substring rotation from 2 to length of rotation
+    string_to_number it
     if first character of rotation is "L"
-        multiply result by -1
+        return it * -1
     end if
-    return result
-
+    return it
 end function
 
 function part1 takes string path returns number is
@@ -69,17 +45,14 @@ function part2 takes string path returns number is
             add 1 to count
         else if current_position is at least 1
             add current_position / 100 to count
-            change current_position to current_position mod 100
         else
             if old_position is at least 1
                 add 1 to count
             end if
             add -1 * (current_position / 100) to count
-            change current_position to 100 + (current_position mod 100)
-            if current_position is 100
-                change current_position to 0
-            end
         end
+        change current_position to current_position mod 100
+
         # say old_position, delta, current_position, count
     end repeat
 
@@ -95,8 +68,8 @@ say "part 1 input: " & it
 expect it is 1084
 
 part2 "example.txt"
-say "part 2 example: " & it
+say "part 2 example:", it
 expect it is 6
 part2 "input.txt"
-say "part 2 input: " & it
+say "part 2 input:", it
 expect it is 6475

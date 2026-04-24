@@ -38,11 +38,30 @@ mkdir -p "$target"
 
 cat >"$target/solution.chatter" <<CHATTER
 # Advent of Code 2026 — Day $raw
-# Run: ./chatter $dir/solution.chatter < $dir/example.txt
-#      ./chatter $dir/solution.chatter < $dir/input.txt
+# Run: ./chatter $dir/solution.chatter 
 
-say "part 1: TODO"
-say "part 2: TODO"
+function part1 takes string path returns number is
+  return 0
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day $raw:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 0
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 0
+
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 0
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 0
 CHATTER
 
 : >"$target/example.txt"
