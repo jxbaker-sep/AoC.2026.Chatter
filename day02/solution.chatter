@@ -1,44 +1,37 @@
 # Advent of Code 2026 — Day 02
 # Run: ./chatter day02/solution.chatter 
 
-# splits string on - and ,
-function simple_split takes string original returns list of string is
-  set result to empty list of string
-  var accumulator is ""
-  repeat with i from 1 to length of original
-    set c to character i of original
-    if c is "-" or c is ","
-      append accumulator to result
-      change accumulator to ""
-    else
-      change accumulator to accumulator & c
-    end if
-  end repeat
-  if accumulator is not ""
-    append accumulator to result
-  end
-  return result
-end
-
-function substring takes string original from number start to number stop returns string is
-  var accumulator is ""
-  repeat with i from start to stop
-    change accumulator to accumulator & character i of original
-  end repeat
-  return accumulator
-end function
+use parse, split from "std:strings"
 
 function part1 takes string path returns number is
+  var result is 0
   read file path
-  simple_split (first item of it)
-  set items to it
-  repeat with i from 1 to length of items by 2
-    set start to item i of items
-    set end to item i + 1 of items
-
+  set ranges to the result of split first item of it on ","
+  # say ranges
+  repeat with range in ranges
+    # say range
+    set lower_upper to the result of split range on "-"
+    set lower to the result of parse item 1 of lower_upper
+    set upper to the result of parse item 2 of lower_upper
+    set half to characters 1 to end / 2 of first item of lower_upper
+    var half_as_number is 0
+    if half is not empty
+      change half_as_number to the result of parse half
+    end if
+    repeat while true
+      parse half_as_number & half_as_number
+      add 1 to half_as_number
+      if it is less than lower
+        next repeat
+      else if it is greater than upper
+        exit repeat
+      else
+        # say it
+        add it to result
+      end if
+    end repeat
   end repeat
-  say it
-  return 0
+  return result
 end function
 
 function part2 takes string path returns number is
@@ -48,14 +41,14 @@ end function
 say "Day 02:"
 part1 "example.txt"
 say "part 1 example:", it
-expect it is 0
+expect it to be 1227775554
 part1 "input.txt"
 say "part 1 input:", it
-expect it is 0
+expect it is 31839939622
 
-part2 "example.txt"
-say "part 2 example:", it
-expect it is 0
-part2 "input.txt"
-say "part 2 input:", it
-expect it is 0
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
