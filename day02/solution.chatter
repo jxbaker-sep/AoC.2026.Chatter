@@ -34,8 +34,44 @@ function part1 takes string path returns number is
   return result
 end function
 
+function duplicate takes string original n number n returns string is
+  var result is ""
+  repeat with i from 1 to n
+    change result to result & original
+  end repeat
+  return result
+end function
+
 function part2 takes string path returns number is
-  return 0
+  var result is 0
+  read file path
+  set ranges to the result of split first item of it on ","
+  # say ranges
+  repeat with range in ranges
+    set collision_table to empty list of number
+    # say range
+    set bounds to the result of split range on "-"
+    set lower_bound to the result of parse item 1 of bounds
+    set upper_bound to the result of parse item 2 of bounds
+    repeat with current from lower_bound to upper_bound
+      set current_as_string to "" & current
+      set casl to length of current_as_string
+      repeat with substring_length from 1 to casl / 2
+        if casl mod substring_length is not 0 or casl / substring_length is less than 2
+          next repeat
+        end if
+        set temp to the result of duplicate (characters 1 to substring_length of current_as_string) n casl / substring_length
+        parse temp
+        if it is at least lower_bound and it is at most upper_bound and not collision_table contains it
+          append it to collision_table
+          add it to result
+        end if
+      end repeat
+
+    end repeat
+  end repeat
+
+  return result
 end function
 
 say "Day 02:"
@@ -46,9 +82,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 31839939622
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 4174379265
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 41662374059
