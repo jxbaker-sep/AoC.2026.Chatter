@@ -48,7 +48,7 @@ function part2 takes string path returns number is
   set ranges to the result of split first item of it on ","
   # say ranges
   repeat with range in ranges
-    set collision_table to empty list of number
+    set collision_table to empty unique list of number
     # say range
     set bounds to the result of split range on "-"
     set lower_bound to the result of parse item 1 of bounds
@@ -60,10 +60,10 @@ function part2 takes string path returns number is
         if casl mod substring_length is not 0 or casl / substring_length is less than 2
           next repeat
         end if
-        set temp to the result of duplicate (characters 1 to substring_length of current_as_string) n casl / substring_length
+        set temp to the result of duplicate characters 1 to substring_length of current_as_string n casl / substring_length
         parse temp
         if it is at least lower_bound and it is at most upper_bound and not collision_table contains it
-          append it to collision_table
+          add it to collision_table
           add it to result
         end if
       end repeat

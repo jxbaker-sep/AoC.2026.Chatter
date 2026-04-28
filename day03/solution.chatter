@@ -1,13 +1,26 @@
 # Advent of Code 2026 — Day 03
 # Run: ./chatter day03/solution.chatter 
 
-use greeting from "std:placeholder"
-
-greeting
-say it
-
 function part1 takes string path returns number is
-  return 0
+  set file_lines to lines of file path
+  var result is 0
+
+  repeat with line in file_lines
+    var first is 0
+    var second is 0
+    repeat with index from 1 to length of line
+      set i to code of character index of line - code of "0"
+      if index is less than length of line and i is greater than first
+        change first to i
+        change second to 0
+      else if index is greater than 1 and i is greater than second
+        change second to i
+      end if
+    end repeat
+    add first * 10 + second to result
+  end repeat
+
+  return result
 end function
 
 function part2 takes string path returns number is
@@ -17,14 +30,14 @@ end function
 say "Day 03:"
 part1 "example.txt"
 say "part 1 example:", it
-expect it is 0
+expect it is 357
 part1 "input.txt"
 say "part 1 input:", it
-expect it is 0
+expect it is 17281
 
-part2 "example.txt"
-say "part 2 example:", it
-expect it is 0
-part2 "input.txt"
-say "part 2 input:", it
-expect it is 0
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
