@@ -21,7 +21,7 @@ function create_grid takes string path returns unique list of struct Point is
   return result
 end function
 
-function count_adjacent takes unique list of struct Point grid y number y x number x returns number is
+function count_adjacent takes unique list of struct Point grid at_y number y at_x number x returns number is
   var result is 0
   repeat with dx from -1 to 1
     repeat with dy from -1 to 1
@@ -37,11 +37,11 @@ function count_adjacent takes unique list of struct Point grid y number y x numb
 end function
 
 function remove_rolls takes unique list of struct Point grid returns number is
-  set to_be_removed to empty unique list of struct Point
+  set to_be_removed to empty list of struct Point
   repeat with point in grid
-    count_adjacent grid y Y of point x X of point
+    count_adjacent grid at_y Y of point at_x X of point
     if it is less than 4
-      add point to to_be_removed
+      append point to to_be_removed
     end if
   end repeat
   repeat with point in to_be_removed
