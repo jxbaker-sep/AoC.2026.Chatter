@@ -32,26 +32,22 @@ end function
 
 function combine_ranges takes list of struct Range ranges returns list of struct Range is
   var result is empty list of struct Range
-  repeat with range in ranges
-    var found is false
+  repeat with index from 1 to length of ranges
+    var range is item index of ranges
     set result2 to empty list of struct Range
-
     repeat with r2 in result
       overlaps r2 with range
       if it
-        change found to true
         set first to the result of min list of First of range, First of r2
         set second to the result of max list of Second of range, Second of r2
         # say "combining ranges", range, r2, first, second
-        append make Range with First first, Second second to result2
+        change range to make Range with First first, Second second
       else
         append r2 to result2
       end if
     end repeat
 
-    if not found
-      append range to result2
-    end if
+    append range to result2
     change result to result2
     # say result
   end repeat
@@ -98,7 +94,14 @@ function part1 takes string path returns number is
 end function
 
 function part2 takes string path returns number is
-  return 0
+  set db to the result of parse_database path
+  set ranges to the result of combine_ranges Ranges of db
+  # say ranges
+  var result is 0
+  repeat with range in ranges
+    add Second of range - First of range + 1 to result
+  end repeat
+  return result
 end function
 
 say "Day 05:"
@@ -109,9 +112,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 885
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 14
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 348115621205535
