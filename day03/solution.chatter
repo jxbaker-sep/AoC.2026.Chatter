@@ -1,30 +1,69 @@
 # Advent of Code 2026 — Day 03
 # Run: ./chatter day03/solution.chatter 
 
+function create_array takes number n returns list of number is
+  set result to empty list of number
+  repeat with i from 1 to n
+    append 0 to result
+  end repeat
+  return result
+end function
+
+function zero takes list of number input start number start is
+  repeat with i from start to length of input
+    change item i of input to 0
+  end repeat
+end function
+
+function compute_joltage takes string bank n number batteries returns number is
+  set input to the result of create_array batteries
+  repeat with bank_index from 1 to length of bank
+    set i to code of character bank_index of line - code of "0"
+    set bank_remainder to length of bank - bank_index
+    repeat with battery_index from 1 to batteries
+
+      set remainder to batteries - battery_index
+      if remainder is greater than bank_remainder
+        next repeat
+      end if
+
+      if i is greater than item battery_index of input 
+        zero input start battery_index
+        change item battery_index of input to i
+        exit repeat
+      end if
+    end repeat
+  end repeat
+  var result is 0
+  repeat with n in input
+    multiply result by 10
+    add n to result
+  end repeat
+  return result
+end function 
+
 function part1 takes string path returns number is
   set file_lines to lines of file path
   var result is 0
 
   repeat with line in file_lines
-    var first is 0
-    var second is 0
-    repeat with index from 1 to length of line
-      set i to code of character index of line - code of "0"
-      if index is less than length of line and i is greater than first
-        change first to i
-        change second to 0
-      else if index is greater than 1 and i is greater than second
-        change second to i
-      end if
-    end repeat
-    add first * 10 + second to result
+    compute_joltage line n 2
+    add it to result
   end repeat
 
   return result
 end function
 
 function part2 takes string path returns number is
-  return 0
+  set file_lines to lines of file path
+  var result is 0
+
+  repeat with line in file_lines
+    compute_joltage line n 12
+    add it to result
+  end repeat
+
+  return result
 end function
 
 say "Day 03:"
@@ -35,9 +74,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 17281
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 3121910778619
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 171388730430281
