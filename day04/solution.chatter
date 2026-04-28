@@ -1,0 +1,71 @@
+# Advent of Code 2026 — Day 04
+# Run: ./chatter day04/solution.chatter 
+
+function create_grid takes string path returns unique list of string is
+  set result to empty unique list of string
+  set all_lines to lines of file path
+  repeat with y from 1 to length of all_lines
+    set line to item y of all_lines
+    repeat with x from 1 to length of line
+      set char to character x of line
+      if char is "@"
+        add y & "," & x to result
+      end if
+    end repeat
+  end repeat
+  return result
+end function
+
+function count_adjacent takes unique list of string grid y number y x number x returns number is
+  var result is 0
+  repeat with dx from -1 to 1
+    repeat with dy from -1 to 1
+      if dx is 0 and dy is 0
+        next repeat
+      end if
+      if grid contains (y + dy) & "," & (x + dx)
+        add 1 to result
+      end if
+    end repeat
+  end repeat
+  return result
+end function
+
+function part1 takes string path returns number is
+  set grid to the result of create_grid path
+  set all_lines to lines of file path
+  set max_y to length of all_lines
+  set max_x to length of item 1 of all_lines
+  var result is 0
+  repeat with y from 1 to max_y
+    repeat with x from 1 to max_x
+      if not grid contains y & "," & x 
+        next repeat
+      end if
+      count_adjacent grid y y x x
+      if it is less than 4
+        add 1 to result
+      end if
+    end repeat
+  end repeat 
+  return result
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day 04:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 13
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 1467
+
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
