@@ -4,17 +4,17 @@
 use parse, split from "std:strings"
 
 function part1 takes string path returns number is
-  var result is 0
+  variable result is 0
   read file path
-  set ranges to the result of split item 1 of it on ","
+  constant ranges is the result of split item 1 of it on ","
   # say ranges
   repeat with range in ranges
     # say range
-    set lower_upper to the result of split range on "-"
-    set lower to the result of parse item 1 of lower_upper
-    set upper to the result of parse item 2 of lower_upper
-    set half to characters 1 to end / 2 of item 1 of lower_upper
-    var half_as_number is 0
+    constant lower_upper is the result of split range on "-"
+    constant lower is the result of parse item 1 of lower_upper
+    constant upper is the result of parse item 2 of lower_upper
+    constant half is characters 1 to end / 2 of item 1 of lower_upper
+    variable half_as_number is 0
     if half is not empty
       change half_as_number to the result of parse half
     end if
@@ -35,7 +35,7 @@ function part1 takes string path returns number is
 end function
 
 function duplicate takes string original n number n returns string is
-  var result is ""
+  variable result is ""
   repeat with i from 1 to n
     change result to result & original
   end repeat
@@ -43,24 +43,24 @@ function duplicate takes string original n number n returns string is
 end function
 
 function part2 takes string path returns number is
-  var result is 0
+  variable result is 0
   read file path
-  set ranges to the result of split item 1 of it on ","
+  constant ranges is the result of split item 1 of it on ","
   # say ranges
   repeat with range in ranges
-    set collision_table to empty unique list of number
+    constant collision_table is empty unique list of number
     # say range
-    set bounds to the result of split range on "-"
-    set lower_bound to the result of parse item 1 of bounds
-    set upper_bound to the result of parse item 2 of bounds
+    constant bounds is the result of split range on "-"
+    constant lower_bound is the result of parse item 1 of bounds
+    constant upper_bound is the result of parse item 2 of bounds
     repeat with current from lower_bound to upper_bound
-      set current_as_string to "" & current
-      set casl to length of current_as_string
+      constant current_as_string is "" & current
+      constant casl is length of current_as_string
       repeat with substring_length from 1 to casl / 2
         if casl mod substring_length is not 0 or casl / substring_length is less than 2
           next repeat
         end if
-        set temp to the result of duplicate characters 1 to substring_length of current_as_string n casl / substring_length
+        constant temp is the result of duplicate characters 1 to substring_length of current_as_string n casl / substring_length
         parse temp
         if it is at least lower_bound and it is at most upper_bound and not collision_table contains it
           add it to collision_table

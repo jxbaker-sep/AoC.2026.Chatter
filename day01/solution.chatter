@@ -3,7 +3,7 @@
 use parse from "std:strings"
 
 function decode takes string rotation returns number is
-    set sub to characters 2 to end of rotation
+    constant sub is characters 2 to end of rotation
     parse sub
     if character 1 of rotation is "L"
         return it * -1
@@ -12,13 +12,13 @@ function decode takes string rotation returns number is
 end function
 
 function part1 takes string path returns number is
-    set rotations to lines of file path
-    var current_position is 50
-    var count is 0
+    constant rotations is lines of file path
+    variable current_position is 50
+    variable count is 0
     repeat with rotation in rotations
         decode rotation
         add it to current_position
-        set temp to current_position mod 100
+        constant temp is current_position mod 100
         if temp is less than 0
             change current_position to temp + 100
         else 
@@ -34,11 +34,11 @@ end function
 
 
 function part2 takes string path returns number is
-    set rotations to lines of file path
-    var current_position is 50
-    var count is 0
+    constant rotations is lines of file path
+    variable current_position is 50
+    variable count is 0
     repeat with rotation in rotations
-        set old_position to current_position
+        constant old_position is current_position
         decode rotation
         add it to current_position
         if current_position is 0

@@ -2,7 +2,7 @@
 # Run: ./chatter day03/solution.chatter 
 
 function create_array takes number n returns list of number is
-  set result to empty list of number
+  constant result is empty list of number
   repeat with i from 1 to n
     append 0 to result
   end repeat
@@ -22,13 +22,13 @@ end function
 #   bank_remainder = bank digits still available after this one
 # Promoting at battery_index is only safe when remainder <= bank_remainder.
 function compute_joltage takes string bank size number batteries returns number is
-  set input to the result of create_array batteries
+  constant input is the result of create_array batteries
   repeat with bank_index from 1 to length of bank
-    set i to code of character bank_index of bank - code of "0"
-    set bank_remainder to length of bank - bank_index
+    constant i is code of character bank_index of bank - code of "0"
+    constant bank_remainder is length of bank - bank_index
     repeat with battery_index from 1 to batteries
 
-      set remainder to batteries - battery_index
+      constant remainder is batteries - battery_index
       if remainder is greater than bank_remainder
         next repeat
       end if
@@ -40,7 +40,7 @@ function compute_joltage takes string bank size number batteries returns number 
       end if
     end repeat
   end repeat
-  var result is 0
+  variable result is 0
   repeat with n in input
     multiply result by 10
     add n to result
@@ -49,8 +49,8 @@ function compute_joltage takes string bank size number batteries returns number 
 end function 
 
 function part1 takes string path returns number is
-  set file_lines to lines of file path
-  var result is 0
+  constant file_lines is lines of file path
+  variable result is 0
 
   repeat with line in file_lines
     compute_joltage line size 2
@@ -61,8 +61,8 @@ function part1 takes string path returns number is
 end function
 
 function part2 takes string path returns number is
-  set file_lines to lines of file path
-  var result is 0
+  constant file_lines is lines of file path
+  variable result is 0
 
   repeat with line in file_lines
     compute_joltage line size 12

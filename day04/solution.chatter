@@ -7,12 +7,12 @@ struct Point
 end struct
 
 function create_grid takes string path returns unique list of struct Point is
-  set result to empty unique list of struct Point
-  set all_lines to lines of file path
+  constant result is empty unique list of struct Point
+  constant all_lines is lines of file path
   repeat with y from 1 to length of all_lines
-    set line to item y of all_lines
+    constant line is item y of all_lines
     repeat with x from 1 to length of line
-      set char to character x of line
+      constant char is character x of line
       if char is "@"
         add make Point with X x, Y y to result
       end if
@@ -22,7 +22,7 @@ function create_grid takes string path returns unique list of struct Point is
 end function
 
 function count_adjacent takes unique list of struct Point grid at_y number y at_x number x returns number is
-  var result is 0
+  variable result is 0
   repeat with dx from -1 to 1
     repeat with dy from -1 to 1
       if dx is 0 and dy is 0
@@ -37,7 +37,7 @@ function count_adjacent takes unique list of struct Point grid at_y number y at_
 end function
 
 function remove_rolls takes unique list of struct Point grid returns number is
-  set to_be_removed to empty list of struct Point
+  constant to_be_removed is empty list of struct Point
   repeat with point in grid
     count_adjacent grid at_y Y of point at_x X of point
     if it is less than 4
@@ -51,13 +51,13 @@ function remove_rolls takes unique list of struct Point grid returns number is
 end function
 
 function part1 takes string path returns number is
-  set grid to the result of create_grid path
+  constant grid is the result of create_grid path
   return the result of remove_rolls grid
 end function
 
 function part2 takes string path returns number is
-  set grid to the result of create_grid path
-  var result is 0
+  constant grid is the result of create_grid path
+  variable result is 0
   repeat while true
     remove_rolls grid
     add it to result
