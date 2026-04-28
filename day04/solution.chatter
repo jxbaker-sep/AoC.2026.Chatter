@@ -36,23 +36,36 @@ function count_adjacent takes unique list of struct Point grid y number y x numb
   return result
 end function
 
-function part1 takes string path returns number is
-  set grid to the result of create_grid path
-  set all_lines to lines of file path
-  set max_y to length of all_lines
-  set max_x to length of item 1 of all_lines
-  var result is 0
+function remove_rolls takes unique list of struct Point grid returns number is
+  set to_be_removed to empty unique list of struct Point
   repeat with point in grid
     count_adjacent grid y Y of point x X of point
     if it is less than 4
-      add 1 to result
+      add point to to_be_removed
     end if
   end repeat
-  return result
+  repeat with point in to_be_removed
+    remove point from grid
+  end repeat
+  return length of to_be_removed
+end function
+
+function part1 takes string path returns number is
+  set grid to the result of create_grid path
+  return the result of remove_rolls grid
 end function
 
 function part2 takes string path returns number is
-  return 0
+  set grid to the result of create_grid path
+  var result is 0
+  repeat while true
+    remove_rolls grid
+    add it to result
+    if it is 0 
+      exit repeat
+    end if
+  end repeat
+  return result
 end function
 
 say "Day 04:"
@@ -63,9 +76,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 1467
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 43
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 8484
