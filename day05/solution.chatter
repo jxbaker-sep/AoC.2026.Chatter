@@ -30,44 +30,50 @@ function within takes struct Range range value number n returns boolean is
   return n is at least First of range and n is at most Second of range
 end function
 
+# Merge a list of inclusive ranges into a list of pairwise-disjoint ranges.
+# Invariant: at the start of each outer iteration, `result` is pairwise disjoint.
+# For each incoming range, anything it overlaps in `result` gets absorbed into
+# `incoming` (which only grows); disjoint entries are copied into `next_result`.
+# Why grown `incoming` can't retroactively overlap an `existing` we already
+# copied: `existing` ended at a2, the later `existing` we merged starts at
+# b1 > a2 (disjoint invariant), and the original `incoming` didn't touch a,
+# so its left edge is > a2. min(left, b1) is therefore still > a2.
 function combine_ranges takes list of struct Range ranges returns list of struct Range is
   var result is empty list of struct Range
   repeat with index from 1 to length of ranges
-    var range is item index of ranges
-    set result2 to empty list of struct Range
-    repeat with r2 in result
-      overlaps r2 with range
+    var incoming is item index of ranges
+    set next_result to empty list of struct Range
+    repeat with existing in result
+      overlaps existing with incoming
       if it
-        set first to the result of min list of First of range, First of r2
-        set second to the result of max list of Second of range, Second of r2
-        # say "combining ranges", range, r2, first, second
-        change range to make Range with First first, Second second
+        set first to the result of min list of First of incoming, First of existing
+        set second to the result of max list of Second of incoming, Second of existing
+        change incoming to make Range with First first, Second second
       else
-        append r2 to result2
+        append existing to next_result
       end if
     end repeat
 
-    append range to result2
-    change result to result2
-    # say result
+    append incoming to next_result
+    change result to next_result
   end repeat
   return result
 end function  
 
 function parse_database takes string path returns struct Database is
   read file path
-  var break is false
+  var parsing_ingredients is false
   set ranges to empty list of struct Range
   set ingredients to empty list of number
   set result to make Database with Ranges ranges, Ingredients ingredients
   repeat with line in it
     if line is empty
-      change break to true
+      change parsing_ingredients to true
       next repeat
-    else if not break
-      set splitted to the result of split line on "-"
-      set first to the result of parse item 1 of splitted
-      set second to the result of parse item 2 of splitted
+    else if not parsing_ingredients
+      set parts to the result of split line on "-"
+      set first to the result of parse item 1 of parts
+      set second to the result of parse item 2 of parts
       append (make Range with First first, Second second) to ranges
     else
       parse line
