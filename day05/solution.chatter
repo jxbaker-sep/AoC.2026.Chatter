@@ -1,0 +1,117 @@
+# Advent of Code 2026 — Day 05
+# Run: ./chatter day05/solution.chatter 
+
+use split, parse from "std:strings"
+use min, max from "std:math"
+
+struct Range
+  number First
+  number Second
+end struct
+
+struct Database
+  list of struct Range Ranges
+  list of number Ingredients
+end struct
+
+function overlaps takes struct Range r1 with struct Range r2 returns boolean is
+  if First of r1 is greater than Second of r2
+    return false
+  end if
+
+  if Second of r1 is less than First of r2
+    return false
+  end if
+
+  return true
+end function
+
+function within takes struct Range range value number n returns boolean is
+  return n is at least First of range and n is at most Second of range
+end function
+
+function combine_ranges takes list of struct Range ranges returns list of struct Range is
+  var result is empty list of struct Range
+  repeat with range in ranges
+    var found is false
+    set result2 to empty list of struct Range
+
+    repeat with r2 in result
+      overlaps r2 with range
+      if it
+        change found to true
+        set first to the result of min list of First of range, First of r2
+        set second to the result of max list of Second of range, Second of r2
+        # say "combining ranges", range, r2, first, second
+        append make Range with First first, Second second to result2
+      else
+        append r2 to result2
+      end if
+    end repeat
+
+    if not found
+      append range to result2
+    end if
+    change result to result2
+    # say result
+  end repeat
+  return result
+end function  
+
+function parse_database takes string path returns struct Database is
+  read file path
+  var break is false
+  set ranges to empty list of struct Range
+  set ingredients to empty list of number
+  set result to make Database with Ranges ranges, Ingredients ingredients
+  repeat with line in it
+    if line is empty
+      change break to true
+      next repeat
+    else if not break
+      set splitted to the result of split line on "-"
+      set first to the result of parse item 1 of splitted
+      set second to the result of parse item 2 of splitted
+      append (make Range with First first, Second second) to ranges
+    else
+      parse line
+      append it to ingredients
+    end if
+  end repeat
+  return result
+end function
+
+function part1 takes string path returns number is
+  set db to the result of parse_database path
+  set ranges to the result of combine_ranges Ranges of db
+  var result is 0
+  repeat with ingredient in Ingredients of db
+    repeat with range in ranges
+      within range value ingredient
+      if it
+        add 1 to result
+        exit repeat
+      end if
+    end repeat
+  end repeat
+  return result
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day 05:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 3
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 885
+
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
