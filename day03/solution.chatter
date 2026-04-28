@@ -9,16 +9,22 @@ function create_array takes number n returns list of number is
   return result
 end function
 
-function zero takes list of number input start number start is
-  repeat with i from start to length of input
+function zero takes list of number input from number start_at is
+  repeat with i from start_at to length of input
     change item i of input to 0
   end repeat
 end function
 
-function compute_joltage takes string bank n number batteries returns number is
+# Greedy max-k-digit in-order subsequence of `bank`, read as a base-10 number.
+# At each bank digit, find the leftmost slot the digit can promote without
+# leaving us short on bank digits to refill the slots after it.
+#   remainder      = slots still to fill after this one
+#   bank_remainder = bank digits still available after this one
+# Promoting at battery_index is only safe when remainder <= bank_remainder.
+function compute_joltage takes string bank size number batteries returns number is
   set input to the result of create_array batteries
   repeat with bank_index from 1 to length of bank
-    set i to code of character bank_index of line - code of "0"
+    set i to code of character bank_index of bank - code of "0"
     set bank_remainder to length of bank - bank_index
     repeat with battery_index from 1 to batteries
 
@@ -28,7 +34,7 @@ function compute_joltage takes string bank n number batteries returns number is
       end if
 
       if i is greater than item battery_index of input 
-        zero input start battery_index
+        zero input from battery_index
         change item battery_index of input to i
         exit repeat
       end if
@@ -47,7 +53,7 @@ function part1 takes string path returns number is
   var result is 0
 
   repeat with line in file_lines
-    compute_joltage line n 2
+    compute_joltage line size 2
     add it to result
   end repeat
 
@@ -59,7 +65,7 @@ function part2 takes string path returns number is
   var result is 0
 
   repeat with line in file_lines
-    compute_joltage line n 12
+    compute_joltage line size 12
     add it to result
   end repeat
 

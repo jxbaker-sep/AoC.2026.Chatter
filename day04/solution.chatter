@@ -1,29 +1,34 @@
 # Advent of Code 2026 — Day 04
 # Run: ./chatter day04/solution.chatter 
 
-function create_grid takes string path returns unique list of string is
-  set result to empty unique list of string
+struct Point
+  number X
+  number Y
+end struct
+
+function create_grid takes string path returns unique list of struct Point is
+  set result to empty unique list of struct Point
   set all_lines to lines of file path
   repeat with y from 1 to length of all_lines
     set line to item y of all_lines
     repeat with x from 1 to length of line
       set char to character x of line
       if char is "@"
-        add y & "," & x to result
+        add make Point with X x, Y y to result
       end if
     end repeat
   end repeat
   return result
 end function
 
-function count_adjacent takes unique list of string grid y number y x number x returns number is
+function count_adjacent takes unique list of struct Point grid y number y x number x returns number is
   var result is 0
   repeat with dx from -1 to 1
     repeat with dy from -1 to 1
       if dx is 0 and dy is 0
         next repeat
       end if
-      if grid contains (y + dy) & "," & (x + dx)
+      if grid contains make Point with X (x + dx), Y (y + dy)
         add 1 to result
       end if
     end repeat
@@ -37,17 +42,12 @@ function part1 takes string path returns number is
   set max_y to length of all_lines
   set max_x to length of item 1 of all_lines
   var result is 0
-  repeat with y from 1 to max_y
-    repeat with x from 1 to max_x
-      if not grid contains y & "," & x 
-        next repeat
-      end if
-      count_adjacent grid y y x x
-      if it is less than 4
-        add 1 to result
-      end if
-    end repeat
-  end repeat 
+  repeat with point in grid
+    count_adjacent grid y Y of point x X of point
+    if it is less than 4
+      add 1 to result
+    end if
+  end repeat
   return result
 end function
 

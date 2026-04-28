@@ -5,7 +5,7 @@ use parse from "std:strings"
 function decode takes string rotation returns number is
     set sub to characters 2 to end of rotation
     parse sub
-    if first character of rotation is "L"
+    if character 1 of rotation is "L"
         return it * -1
     end if
     return it

@@ -6,14 +6,14 @@ use parse, split from "std:strings"
 function part1 takes string path returns number is
   var result is 0
   read file path
-  set ranges to the result of split first item of it on ","
+  set ranges to the result of split item 1 of it on ","
   # say ranges
   repeat with range in ranges
     # say range
     set lower_upper to the result of split range on "-"
     set lower to the result of parse item 1 of lower_upper
     set upper to the result of parse item 2 of lower_upper
-    set half to characters 1 to end / 2 of first item of lower_upper
+    set half to characters 1 to end / 2 of item 1 of lower_upper
     var half_as_number is 0
     if half is not empty
       change half_as_number to the result of parse half
@@ -45,7 +45,7 @@ end function
 function part2 takes string path returns number is
   var result is 0
   read file path
-  set ranges to the result of split first item of it on ","
+  set ranges to the result of split item 1 of it on ","
   # say ranges
   repeat with range in ranges
     set collision_table to empty unique list of number
