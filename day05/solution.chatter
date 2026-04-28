@@ -40,8 +40,8 @@ end function
 # so its left edge is > a2. min(left, b1) is therefore still > a2.
 function combine_ranges takes list of struct Range ranges returns list of struct Range is
   var result is empty list of struct Range
-  repeat with index from 1 to length of ranges
-    var incoming is item index of ranges
+  repeat with original_incoming in ranges
+    var incoming is original_incoming
     set next_result to empty list of struct Range
     repeat with existing in result
       overlaps existing with incoming
