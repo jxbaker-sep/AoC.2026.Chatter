@@ -1,10 +1,7 @@
 # Advent of Code 2026 — Day 04
 # Run: ./chatter day04/solution.chatter 
 
-struct Point
-  number X
-  number Y
-end struct
+use Point from "../utils/point"
 
 function create_grid takes string path returns unique list of struct Point is
   constant result is empty unique list of struct Point
