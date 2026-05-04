@@ -10,6 +10,46 @@ struct Worksheet
   number Rows
 end struct
 
+struct WorksheetPart2
+  list of number ColumnToNumber
+  list of string ColumnToOp
+end struct
+
+function parse_part2 takes string path returns WorksheetPart2 is
+  constant column_to_number is empty list of number
+  constant file_lines is lines of file path
+  variable rows is length of file_lines - 1
+  repeat with y from 1 to rows
+    constant line is item y of file_lines
+    repeat with x from 1 to length of line
+      if length of column_to_number is less than x
+        append -1 to column_to_number
+      end if
+      
+      constant c is character x of line
+      
+      if c is whitespace
+        next repeat
+      end if
+      
+      variable v is item x of column_to_number
+      if v is -1
+        change v to 0
+      end if
+      parse c
+      change item x of column_to_number to v * 10 + it
+    end repeat
+  end repeat
+
+  constant column_to_op is empty list of string
+  constant last_line is the last item of file_lines
+  repeat with x from 1 to length of last_line
+    append character x of last_line to column_to_op
+  end repeat
+
+  return make WorksheetPart2 with ColumnToNumber column_to_number, ColumnToOp column_to_op
+end function
+
 function parse_part1 takes string path returns Worksheet is
   constant grid is empty dictionary from Point to number
   constant file_lines is lines of file path
@@ -54,7 +94,32 @@ function part1 takes string path returns number is
 end function
 
 function part2 takes string path returns number is
-  return 0
+  parse_part2 path
+  constant column_to_number is ColumnToNumber of it
+  constant column_to_op is ColumnToOp of it
+  variable result is 0
+  variable current_op is " "
+  variable cumul is 0
+  repeat with column from 1 to length of column_to_number
+    constant value is item column of column_to_number
+    if value is -1
+      change current_op to " "
+    else if column is at most length of column_to_op and item column of column_to_op is not " "
+      add cumul to result
+      change current_op to item column of column_to_op
+      change cumul to value
+      next repeat
+    else if current_op is "+"
+      add value to cumul
+    else if current_op is "*"
+      multiply cumul by value
+    else
+      expect false, "expected current_op to be +/*, got " & current_op
+    end if
+  end repeat
+  add cumul to result
+
+  return result
 end function
 
 say "Day 06:"
@@ -65,9 +130,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 5335495999141
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 3263827
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 10142723156431
