@@ -1,0 +1,73 @@
+# Advent of Code 2026 — Day 06
+# Run: ./chatter day06/solution.chatter 
+
+use Point from "../utils/point"
+use parse, split from "std:strings"
+
+struct Worksheet 
+  dictionary from Point to number Grid
+  list of string Ops
+  number Rows
+end struct
+
+function parse_part1 takes string path returns Worksheet is
+  constant grid is empty dictionary from Point to number
+  constant file_lines is lines of file path
+  variable rows is length of file_lines - 1
+  repeat with y from 1 to rows
+    split item y of file_lines on " " 
+    filter it where it is not empty
+    map it using the result of parse it
+    repeat with x from 1 to length of it
+      change value of (make Point with X x, Y y) in grid to item x of it
+    end repeat
+  end repeat
+  split the last item of file_lines on " "
+  filter it where it is not empty
+
+  return make Worksheet with Grid grid, Ops it, Rows rows
+end function
+
+function part1 takes string path returns number is
+  parse_part1 path
+  constant grid is Grid of it
+  constant ops is Ops of it
+  constant rows is Rows of it
+  variable result is 0
+  repeat with x from 1 to length of ops
+    variable temp is value of (make Point with X x, Y 1) in grid
+    constant op is item x of ops
+    repeat with y from 2 to rows
+      variable v is value of (make Point with X x, Y y) in grid
+      if op is "+"
+        add v to temp
+      else if op is "*"
+        multiply temp by v
+      else
+        expect false, "Expected op to be one of + or *, got " & op
+      end if
+    end repeat
+    add temp to result
+  end repeat
+  # say it
+  return result
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day 06:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 4277556
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 5335495999141
+
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
