@@ -1,4 +1,4 @@
-# Advent of Code 2025 — Day 07
+# Advent of Code 2026 — Day 07
 # Run: ./chatter day07/solution.chatter 
 
 struct Row
@@ -23,6 +23,7 @@ function parse1 takes string path returns World
   repeat with line in it
     constant row is the result of make_row
     repeat with x from 1 to length of line
+      
     end repeat
   end repeat
 end struct
