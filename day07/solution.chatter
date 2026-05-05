@@ -1,0 +1,51 @@
+# Advent of Code 2026 — Day 07
+# Run: ./chatter day07/solution.chatter 
+
+struct Row
+  unique list of number Values 
+end struct
+
+struct World
+  list of struct Row Rows
+end struct
+
+function make_row returns Row
+  return make Row with Values empty unique list of struct Row
+end struct
+
+function make_world returns World
+  return make World with Rows empty list of struct Row
+end struct
+
+function parse1 takes string path returns World
+  constant result is the result of make_world
+  read file path
+  repeat with line in it
+    constant row is the result of make_row
+    repeat with x from 1 to length of line
+    end repeat
+  end repeat
+end struct
+
+function part1 takes string path returns number is
+  return 0
+end function
+
+function part2 takes string path returns number is
+  return 0
+end function
+
+say "Day 07:"
+part1 "example.txt"
+say "part 1 example:", it
+expect it is 21
+# part1 "input.txt"
+# say "part 1 input:", it
+# expect it is 1635
+
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0

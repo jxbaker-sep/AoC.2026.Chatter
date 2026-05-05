@@ -99,25 +99,25 @@ function part2 takes string path returns number is
   constant column_to_op is ColumnToOp of it
   variable result is 0
   variable current_op is " "
-  variable cumul is 0
+  variable current is 0
   repeat with column from 1 to length of column_to_number
     constant value is item column of column_to_number
     if value is -1
       change current_op to " "
     else if column is at most length of column_to_op and item column of column_to_op is not " "
-      add cumul to result
+      add current to result
       change current_op to item column of column_to_op
-      change cumul to value
+      change current to value
       next repeat
     else if current_op is "+"
-      add value to cumul
+      add value to current
     else if current_op is "*"
-      multiply cumul by value
+      multiply current by value
     else
       expect false, "expected current_op to be +/*, got " & current_op
     end if
   end repeat
-  add cumul to result
+  add current to result
 
   return result
 end function
