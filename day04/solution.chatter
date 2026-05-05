@@ -1,4 +1,4 @@
-# Advent of Code 2026 — Day 04
+# Advent of Code 2025 — Day 04
 # Run: ./chatter day04/solution.chatter 
 
 use Point from "../utils/point"

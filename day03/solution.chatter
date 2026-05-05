@@ -1,4 +1,4 @@
-# Advent of Code 2026 — Day 03
+# Advent of Code 2025 — Day 03
 # Run: ./chatter day03/solution.chatter 
 
 function create_array takes number n returns list of number is

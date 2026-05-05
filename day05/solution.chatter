@@ -1,4 +1,4 @@
-# Advent of Code 2026 — Day 05
+# Advent of Code 2025 — Day 05
 # Run: ./chatter day05/solution.chatter 
 
 use split, parse from "std:strings"

@@ -1,6 +1,6 @@
-# AoC.2026.Chatter — Copilot Instructions
+# AoC.2025.Chatter — Copilot Instructions
 
-Solutions to **Advent of Code 2026**, written in **Chatter** — an experimental,
+Solutions to **Advent of Code 2025**, written in **Chatter** — an experimental,
 HyperTalk-inspired language being developed in parallel at `~/dev/chatter`.
 
 This repo is a *consumer* of the Chatter language. It is one of the primary
