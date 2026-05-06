@@ -1,8 +1,83 @@
 # Advent of Code 2025 — Day 8
 # Run: ./chatter day08/solution.chatter 
 
-function part1 takes string path returns number is
-  return 0
+use abs from "std:math"
+use split, parse from "std:strings"
+
+struct Point3
+  number X
+  number Y
+  number Z
+end struct
+
+struct P3Pair
+  Point3 First
+  Point3 Second
+  number Distance
+end struct
+
+function distance_from takes Point3 lhs to Point3 rhs returns number is
+  constant x is the result of abs X of lhs - X of rhs
+  constant y is the result of abs Y of lhs - Y of rhs
+  constant z is the result of abs Z of lhs - Z of rhs
+  # Note! we don't have to compute sqrt because it doesn't change the relative distances!
+  # Thank goodness, because chatter doesn't have non-integral numeric types.
+  return x ** 2 + y ** 2 + z ** 2
+end function 
+
+function parse1 takes string path returns list of Point3 is
+  read file path
+  constant result is empty list of Point3
+  repeat with line in it
+    split line on ","
+    map it using the result of parse it
+    append make Point3 with X (item 1 of it), Y (item 2 of it), Z (item 3 of it) to result
+  end repeat
+  return result
+end function
+
+function part1 takes string path with number connections returns number is
+  constant points is the result of parse1 path
+  constant pairs is empty list of P3Pair
+  repeat with i from 1 to length of points - 1
+    repeat with j from i + 1 to length of points
+      distance_from item i of points to item j of points
+      append make P3Pair with First item i of points, Second item j of points, Distance it to pairs
+    end repeat
+  end repeat
+  sort pairs by Distance of it descending
+  constant p3_to_n is empty dictionary from Point3 to number
+  constant n2n is empty list of number
+
+  # At first, each point is in a network with itself
+  repeat with point in points
+    append 1 to n2n
+    change value of point in p3_to_n to length of n2n
+  end repeat
+  
+  repeat with _ from 1 to connections
+    constant connection is the last item of pairs
+    remove item length of pairs from pairs
+    constant f1 is value of First of connection in p3_to_n
+    constant f2 is value of Second of connection in p3_to_n
+    if f1 is f2
+      next repeat
+    end if
+    # different set numbers; add all of set f1 to set f2
+    add item f1 of n2n to item f2 of n2n
+    change item f1 of n2n to 0
+
+    repeat with key in keys of p3_to_n
+      if value of key in p3_to_n is f1
+        change value of key in p3_to_n to f2
+      end if
+    end repeat
+
+  end repeat
+
+
+  sort n2n descending
+  return item 1 of n2n * item 2 of n2n * item 3 of n2n
 end function
 
 function part2 takes string path returns number is
@@ -10,16 +85,16 @@ function part2 takes string path returns number is
 end function
 
 say "Day 8:"
-part1 "example.txt"
+part1 "example.txt" with 10
 say "part 1 example:", it
-expect it is 0
-part1 "input.txt"
+expect it is 40
+part1 "input.txt" with 1_000
 say "part 1 input:", it
-expect it is 0
+expect it is 102816
 
-part2 "example.txt"
-say "part 2 example:", it
-expect it is 0
-part2 "input.txt"
-say "part 2 input:", it
-expect it is 0
+# part2 "example.txt"
+# say "part 2 example:", it
+# expect it is 0
+# part2 "input.txt"
+# say "part 2 input:", it
+# expect it is 0
