@@ -1,35 +1,56 @@
 # Advent of Code 2026 — Day 07
-# Run: ./chatter day07/solution.chatter 
+# Run: ./chatter day07/solution.chatter
 
 struct Row
-  unique list of number Values 
+  unique list of number Values
 end struct
 
 struct World
   list of struct Row Rows
 end struct
 
-function make_row returns Row
-  return make Row with Values empty unique list of struct Row
-end struct
-
-function make_world returns World
-  return make World with Rows empty list of struct Row
-end struct
-
-function parse1 takes string path returns World
-  constant result is the result of make_world
+function parse1 takes string path returns World is
+  constant rows is empty list of struct Row
+  constant world is make World with Rows rows
   read file path
   repeat with line in it
-    constant row is the result of make_row
+    constant values is empty unique list of number
+    constant row is make Row with Values values
+    append row to rows
     repeat with x from 1 to length of line
-      
+      if list of "S", "^" contains character x of line
+        add x to values
+      end if
     end repeat
   end repeat
-end struct
+  return world
+end function
 
 function part1 takes string path returns number is
-  return 0
+  constant world is the result of parse1 path
+  constant rows is Rows of world
+  # say it
+  constant current is empty unique list of number
+  repeat with i in Values of item 1 of rows
+    add i to current
+  end repeat
+
+  # hack for not having list ranges...
+  remove item 1 from rows
+  variable splits is 0
+
+  repeat with row in Rows of world
+    repeat with n in Values of row
+      if current contains n
+        add 1 to splits
+        remove n from current
+        add n+1 to current
+        add n-1 to current
+      end if
+    end repeat
+  end repeat
+
+  return splits
 end function
 
 function part2 takes string path returns number is
@@ -40,9 +61,9 @@ say "Day 07:"
 part1 "example.txt"
 say "part 1 example:", it
 expect it is 21
-# part1 "input.txt"
-# say "part 1 input:", it
-# expect it is 1635
+part1 "input.txt"
+say "part 1 input:", it
+expect it is 1635
 
 # part2 "example.txt"
 # say "part 2 example:", it
