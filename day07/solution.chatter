@@ -1,6 +1,8 @@
 # Advent of Code 2026 — Day 07
 # Run: ./chatter day07/solution.chatter
 
+use Point from "../utils/point"
+
 struct Row
   unique list of number Values
 end struct
@@ -54,7 +56,42 @@ function part1 takes string path returns number is
 end function
 
 function part2 takes string path returns number is
-  return 0
+  constant cache is empty dictionary from struct Point to number
+  constant world is the result of parse1 path
+  constant rows is Rows of world
+  # say it
+  variable start is 0
+  repeat with i in Values of item 1 of rows
+    change start to i
+  end repeat
+
+  return the result of get_universes rows from (make Point with X start, Y 2) with cache
+end function
+
+function get_universes takes list of struct Row rows from struct Point point with dictionary from struct Point to number cache returns number is
+  if cache contains point
+    return value of point in cache
+  end if
+  
+  constant x is X of point
+  constant y is Y of point
+  
+  if y is greater than length of rows
+    return 1
+  end if
+  
+  constant row is Values of item y of rows
+  
+  if row contains x 
+    constant lhs is the result of get_universes rows from make Point with X (x-1), Y (y + 1) with cache
+    constant rhs is the result of get_universes rows from make Point with X (x+1), Y (y + 1) with cache
+    change value of point in cache to lhs + rhs
+    return lhs + rhs
+  else
+    get_universes rows from make Point with X x, Y (y + 1) with cache
+    change value of point in cache to it
+    return it
+  end if
 end function
 
 say "Day 07:"
@@ -65,9 +102,9 @@ part1 "input.txt"
 say "part 1 input:", it
 expect it is 1635
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt"
+say "part 2 example:", it
+expect it is 40
+part2 "input.txt"
+say "part 2 input:", it
+expect it is 58097428661390
