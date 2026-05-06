@@ -10,11 +10,11 @@ struct Range
 end struct
 
 struct Database
-  list of struct Range Ranges
+  list of Range Ranges
   list of number Ingredients
 end struct
 
-function overlaps takes struct Range r1 with struct Range r2 returns boolean is
+function overlaps takes Range r1 with Range r2 returns boolean is
   if First of r1 is greater than Second of r2
     return false
   end if
@@ -26,7 +26,7 @@ function overlaps takes struct Range r1 with struct Range r2 returns boolean is
   return true
 end function
 
-function within takes struct Range range value number n returns boolean is
+function within takes Range range value number n returns boolean is
   return n is at least First of range and n is at most Second of range
 end function
 
@@ -38,11 +38,11 @@ end function
 # copied: `existing` ended at a2, the later `existing` we merged starts at
 # b1 > a2 (disjoint invariant), and the original `incoming` didn't touch a,
 # so its left edge is > a2. min(left, b1) is therefore still > a2.
-function combine_ranges takes list of struct Range ranges returns list of struct Range is
-  variable result is empty list of struct Range
+function combine_ranges takes list of Range ranges returns list of Range is
+  variable result is empty list of Range
   repeat with original_incoming in ranges
     variable incoming is original_incoming
-    constant next_result is empty list of struct Range
+    constant next_result is empty list of Range
     repeat with existing in result
       overlaps existing with incoming
       if it
@@ -60,10 +60,10 @@ function combine_ranges takes list of struct Range ranges returns list of struct
   return result
 end function  
 
-function parse_database takes string path returns struct Database is
+function parse_database takes string path returns Database is
   read file path
   variable parsing_ingredients is false
-  constant ranges is empty list of struct Range
+  constant ranges is empty list of Range
   constant ingredients is empty list of number
   constant result is make Database with Ranges ranges, Ingredients ingredients
   repeat with line in it

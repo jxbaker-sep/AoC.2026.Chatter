@@ -3,8 +3,8 @@
 
 use Point from "../utils/point"
 
-function create_grid takes string path returns unique list of struct Point is
-  constant result is empty unique list of struct Point
+function create_grid takes string path returns unique list of Point is
+  constant result is empty unique list of Point
   constant all_lines is lines of file path
   repeat with y from 1 to length of all_lines
     constant line is item y of all_lines
@@ -18,7 +18,7 @@ function create_grid takes string path returns unique list of struct Point is
   return result
 end function
 
-function count_adjacent takes unique list of struct Point grid at_y number y at_x number x returns number is
+function count_adjacent takes unique list of Point grid at_y number y at_x number x returns number is
   variable result is 0
   repeat with dx from -1 to 1
     repeat with dy from -1 to 1
@@ -33,8 +33,8 @@ function count_adjacent takes unique list of struct Point grid at_y number y at_
   return result
 end function
 
-function remove_rolls takes unique list of struct Point grid returns number is
-  constant to_be_removed is empty list of struct Point
+function remove_rolls takes unique list of Point grid returns number is
+  constant to_be_removed is empty list of Point
   repeat with point in grid
     count_adjacent grid at_y Y of point at_x X of point
     if it is less than 4

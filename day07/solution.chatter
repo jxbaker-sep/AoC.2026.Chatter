@@ -8,11 +8,11 @@ struct Row
 end struct
 
 struct World
-  list of struct Row Rows
+  list of Row Rows
 end struct
 
 function parse1 takes string path returns World is
-  constant rows is empty list of struct Row
+  constant rows is empty list of Row
   constant world is make World with Rows rows
   read file path
   repeat with line in it
@@ -56,7 +56,7 @@ function part1 takes string path returns number is
 end function
 
 function part2 takes string path returns number is
-  constant cache is empty dictionary from struct Point to number
+  constant cache is empty dictionary from Point to number
   constant world is the result of parse1 path
   constant rows is Rows of world
   # say it
@@ -68,7 +68,7 @@ function part2 takes string path returns number is
   return the result of get_universes rows from (make Point with X start, Y 2) with cache
 end function
 
-function get_universes takes list of struct Row rows from struct Point point with dictionary from struct Point to number cache returns number is
+function get_universes takes list of Row rows from Point point with dictionary from Point to number cache returns number is
   if cache contains point
     return value of point in cache
   end if
@@ -80,15 +80,15 @@ function get_universes takes list of struct Row rows from struct Point point wit
     return 1
   end if
   
-  constant row is Values of item y of rows
+  constant row is Values of item (Y of point) of rows
   
   if row contains x 
-    constant lhs is the result of get_universes rows from make Point with X (x-1), Y (y + 1) with cache
-    constant rhs is the result of get_universes rows from make Point with X (x+1), Y (y + 1) with cache
+    constant lhs is the result of get_universes rows from make Point with X x-1, Y y + 1 with cache
+    constant rhs is the result of get_universes rows from make Point with X x+1, Y y + 1 with cache
     change value of point in cache to lhs + rhs
     return lhs + rhs
   else
-    get_universes rows from make Point with X x, Y (y + 1) with cache
+    get_universes rows from make Point with X x, Y y + 1 with cache
     change value of point in cache to it
     return it
   end if
