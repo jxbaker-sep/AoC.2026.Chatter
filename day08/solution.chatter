@@ -25,15 +25,26 @@ function distance_from takes Point3 lhs to Point3 rhs returns number is
   return x ** 2 + y ** 2 + z ** 2
 end function 
 
+function line_to_p3 takes string line returns Point3 is
+  split line on ","
+  map it using the result of parse it
+  return make Point3 with X (item 1 of it), Y (item 2 of it), Z (item 3 of it)
+end function
+
 function parse1 takes string path returns list of Point3 is
   read file path
-  constant result is empty list of Point3
-  repeat with line in it
-    split line on ","
-    map it using the result of parse it
-    append make Point3 with X (item 1 of it), Y (item 2 of it), Z (item 3 of it) to result
-  end repeat
-  return result
+  map it using the result of line_to_p3 it
+  return it
+end function
+
+function find_root takes number setno in list of number nexts returns number is
+  constant n is item setno of nexts
+  if n is setno
+    return n
+  end if
+  constant root is the result of find_root n in nexts
+  change item setno of nexts to root
+  return root
 end function
 
 function part1 takes string path with number connections returns number is
@@ -46,38 +57,42 @@ function part1 takes string path with number connections returns number is
     end repeat
   end repeat
   sort pairs by Distance of it descending
-  constant p3_to_n is empty dictionary from Point3 to number
-  constant n2n is empty list of number
+  constant point_to_next is empty dictionary from Point3 to number
+  constant nexts is empty list of number
 
   # At first, each point is in a network with itself
   repeat with point in points
-    append 1 to n2n
-    change value of point in p3_to_n to length of n2n
+    constant n is length of nexts + 1
+    append n to nexts
+    change value of point in point_to_next to n
   end repeat
   
   repeat with _ from 1 to connections
     constant connection is the last item of pairs
     remove item length of pairs from pairs
-    constant f1 is value of First of connection in p3_to_n
-    constant f2 is value of Second of connection in p3_to_n
-    if f1 is f2
+    constant set1 is value of First of connection in point_to_next
+    constant set2 is value of Second of connection in point_to_next
+    constant root1 is the result of find_root set1 in nexts
+    constant root2 is the result of find_root set2 in nexts
+    if root1 is root2
       next repeat
     end if
-    # different set numbers; add all of set f1 to set f2
-    add item f1 of n2n to item f2 of n2n
-    change item f1 of n2n to 0
-
-    repeat with key in keys of p3_to_n
-      if value of key in p3_to_n is f1
-        change value of key in p3_to_n to f2
-      end if
-    end repeat
-
+    # different set numbers; move everything from set1 to set2
+    change item root1 of nexts to root2
   end repeat
 
+  constant temp is empty list of number
+  repeat length of nexts times
+    append 0 to temp
+  end repeat
 
-  sort n2n descending
-  return item 1 of n2n * item 2 of n2n * item 3 of n2n
+  repeat with i from 1 to length of nexts
+    find_root i in nexts
+    add 1 to item it of temp
+  end repeat
+
+  sort temp descending
+  return item 1 of temp * item 2 of temp * item 3 of temp
 end function
 
 function part2 takes string path returns number is
