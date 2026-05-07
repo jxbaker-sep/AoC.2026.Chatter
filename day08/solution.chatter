@@ -1,7 +1,7 @@
 # Advent of Code 2025 — Day 8
 # Run: ./chatter day08/solution.chatter 
 
-use abs from "std:math"
+use abs, min, max from "std:math"
 use split, parse from "std:strings"
 
 struct Point3
@@ -14,6 +14,10 @@ struct P3Pair
   Point3 First
   Point3 Second
   number Distance
+end struct
+
+struct ListOfPairs
+  list of P3Pair Pairs
 end struct
 
 function distance_from takes Point3 lhs to Point3 rhs returns number is
@@ -50,13 +54,34 @@ end function
 function part1 takes string path with number connections returns number is
   constant points is the result of parse1 path
   constant pairs is empty list of P3Pair
+  variable max_distance is 0
   repeat with i from 1 to length of points - 1
     repeat with j from i + 1 to length of points
       distance_from item i of points to item j of points
+      if max_distance is less than it
+        change max_distance to it
+      end if
       append make P3Pair with First item i of points, Second item j of points, Distance it to pairs
     end repeat
   end repeat
-  sort pairs by Distance of it descending
+
+  # Compute buckets
+  constant bucket_size is max_distance / (4 * connections)
+  # say bucket_size
+  variable current_key is 2 ** 52 # it just needs to be "big"
+  constant buckets is empty dictionary from number to ListOfPairs
+  repeat with pair in pairs
+    constant n is Distance of pair / bucket_size
+    if n is less than current_key
+      change current_key to n
+    end if
+    if not buckets contains n
+      change value of n in buckets to make ListOfPairs with Pairs empty list of P3Pair 
+    end if
+    constant bucket is Pairs of value of n in buckets
+    append pair to bucket
+  end repeat
+
   constant point_to_next is empty dictionary from Point3 to number
   constant nexts is empty list of number
 
@@ -66,10 +91,25 @@ function part1 takes string path with number connections returns number is
     append n to nexts
     change value of point in point_to_next to n
   end repeat
-  
-  repeat with _ from 1 to connections
-    constant connection is the last item of pairs
-    remove item length of pairs from pairs
+
+  subtract 1 from current_key # so first iteration works
+  variable bucket is empty list of P3Pair
+
+  repeat connections times
+    if bucket is empty
+      repeat while true
+        add 1 to current_key
+        if not buckets contains current_key
+          next repeat
+        end if
+        change bucket to Pairs of value of current_key in buckets
+        sort bucket by Distance of it descending
+        exit repeat
+      end repeat
+    end if
+    # sort pairs by Distance of it descending
+    constant connection is the last item of bucket
+    remove item length of bucket from bucket
     constant set1 is value of First of connection in point_to_next
     constant set2 is value of Second of connection in point_to_next
     constant root1 is the result of find_root set1 in nexts
