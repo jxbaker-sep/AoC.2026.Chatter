@@ -135,8 +135,86 @@ function part1 takes string path with number connections returns number is
   return item 1 of temp * item 2 of temp * item 3 of temp
 end function
 
-function part2 takes string path returns number is
-  return 0
+function part2 takes string path with number connections returns number is
+  constant points is the result of parse1 path
+  constant pairs is empty list of P3Pair
+  variable max_distance is 0
+  repeat with i from 1 to length of points - 1
+    repeat with j from i + 1 to length of points
+      distance_from item i of points to item j of points
+      if max_distance is less than it
+        change max_distance to it
+      end if
+      append make P3Pair with First item i of points, Second item j of points, Distance it to pairs
+    end repeat
+  end repeat
+
+  # Compute buckets
+  constant bucket_size is max_distance / (4 * connections)
+  # say bucket_size
+  variable current_key is 2 ** 52 # it just needs to be "big"
+  constant buckets is empty dictionary from number to ListOfPairs
+  repeat with pair in pairs
+    constant n is Distance of pair / bucket_size
+    if n is less than current_key
+      change current_key to n
+    end if
+    if not buckets contains n
+      change value of n in buckets to make ListOfPairs with Pairs empty list of P3Pair 
+    end if
+    constant bucket is Pairs of value of n in buckets
+    append pair to bucket
+  end repeat
+
+  constant point_to_next is empty dictionary from Point3 to number
+  constant nexts is empty list of number
+  constant unique_sets is empty unique list of number
+
+  # At first, each point is in a network with itself
+  repeat with point in points
+    constant n is length of nexts + 1
+    append n to nexts
+    add n to unique_sets
+    change value of point in point_to_next to n
+  end repeat
+
+  subtract 1 from current_key # so first iteration works
+  variable bucket is empty list of P3Pair
+
+  repeat while true
+    if bucket is empty
+      repeat while true
+        add 1 to current_key
+        if not buckets contains current_key
+          next repeat
+        end if
+        change bucket to Pairs of value of current_key in buckets
+        sort bucket by Distance of it descending
+        exit repeat
+      end repeat
+    end if
+    # sort pairs by Distance of it descending
+    constant connection is the last item of bucket
+    remove item length of bucket from bucket
+    constant set1 is value of First of connection in point_to_next
+    constant set2 is value of Second of connection in point_to_next
+    constant root1 is the result of find_root set1 in nexts
+    constant root2 is the result of find_root set2 in nexts
+    if root1 is root2
+      next repeat
+    end if
+    # different set numbers; move everything from set1 to set2
+    change item root1 of nexts to root2
+    remove root1 from unique_sets
+    if length of unique_sets is 1
+      constant x1 is X of First of connection
+      constant x2 is X of Second of connection
+      return x1 * x2
+    end if 
+  end repeat
+
+  expect false, "Unreachable code"
+  return -1
 end function
 
 say "Day 8:"
@@ -147,9 +225,9 @@ part1 "input.txt" with 1_000
 say "part 1 input:", it
 expect it is 102816
 
-# part2 "example.txt"
-# say "part 2 example:", it
-# expect it is 0
-# part2 "input.txt"
-# say "part 2 input:", it
-# expect it is 0
+part2 "example.txt" with 10
+say "part 2 example:", it
+expect it is 25272
+part2 "input.txt" with 1_000
+say "part 2 input:", it
+expect it is 100011612
